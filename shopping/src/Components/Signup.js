@@ -4,7 +4,11 @@ import { useNavigate } from "react-router-dom";
 function Signup(props) {
     useEffect(() => {
 
-        props.setProgress(100)
+        props.setProgress(100);
+        if (localStorage.getItem('token')) {
+            props.showAlert('you are already logged in', 'danger')
+            history('/product')
+        }
 
     }, [])
     const [credentials, setcredentials] = useState({ name: "", email: "", password: "", cpassword: "" })
@@ -27,7 +31,13 @@ function Signup(props) {
 
 
         console.log(json);
-        if (json.success) {
+        if (localStorage.getItem('token')) {
+
+            props.showAlert('already logged in', 'danger')
+            history('/product')
+            exit();
+        }
+        if (!(localStorage.getItem('token'))) {
             localStorage.setItem('token', json.authtoken)
             console.log("account created sucessfully", "success")
             props.showAlert("account created sucessfully", "success")

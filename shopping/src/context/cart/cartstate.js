@@ -1,21 +1,24 @@
-import React, { useState } from "react";
+import react, { useState } from "react";
 import cartContext from "../cart/cartContext";
 
 
-const cartState = (props) => {
+const NoteState = (props) => {
+    const initialnotes = []
 
     const [cartItems, setCartItems] = useState([]);
+    const [product, setProduct] = useState(initialnotes)
 
     //display all cart
     const fetchCartItems = async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_url}/cart/display`, {
+            const response = await fetch(`http://localhost:3000/cart/display`, {
                 method: 'GET',
                 headers: {
                     "auth-token": localStorage.getItem("token"),
-                    "Content-Type": "application/json",
                 },
             });
+            const data = await response.json();
+            console.log(data);
 
             if (response.ok) {
                 const data = await response.json();
@@ -107,15 +110,38 @@ const cartState = (props) => {
         }
     };
 
+    const displayProduct = async () => {
+        try {
 
+            const response = await fetch(`${process.env.REACT_APP_url}product/display`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+
+
+            });
+            const json = await response.json();
+            setProduct(json)
+
+
+        } catch (error) {
+            console.log({ message: error.message });
+        }
+
+    }
+
+    const state = {
+        "name": 'nada'
+    }
 
 
 
     return (
-        <cartContext.Provider value={{ cartItems, addtoCart, fetchCartItems, removeFromCart, increaseQuantity }}>
+        <cartContext.Provider value={{ state, fetchCartItems }}>
             {props.children}
         </cartContext.Provider>
     )
 }
 
-export default cartState
+export default NoteState

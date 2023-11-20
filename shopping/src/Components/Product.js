@@ -32,7 +32,14 @@ function Product(props) {
 
         }
         props.setProgress(50)
-        displayProduct()
+        if (localStorage.getItem('token')) {
+            displayProduct()
+        }
+        else {
+            history('/login')
+            props.showAlert('please log in first', 'danger')
+            console.log('not valid');
+        }
         props.setProgress(100)
 
         // eslint-disable-next-line

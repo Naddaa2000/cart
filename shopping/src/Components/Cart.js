@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import cartContext from '../context/cart/cartContext';
+import { useNavigate } from "react-router-dom";
 
 function Cart(props) {
-    // const context = useContext(cartContext)
-    // const { fetchCartItems } = context
+    // const a = useContext(cartContext);
+    // const { fetchCartItems } = a;
     const [cartItems, setCartItems] = useState([]);
+    let history = useNavigate();
+
 
     useEffect(() => {
         const fetchCartItems = async () => {
@@ -26,9 +29,19 @@ function Cart(props) {
             } catch (error) {
                 console.error('Error fetching cart items:', error.message);
             }
-        }; props.setProgress(40)
+        };
+        props.setProgress(40)
 
-        fetchCartItems();
+        if (localStorage.getItem('token')) {
+
+            fetchCartItems()
+        }
+        else {
+            history('/login')
+            props.showAlert('please log in first', 'danger')
+            console.log('not valid');
+        }
+
         props.setProgress(100)
     }, []);
 

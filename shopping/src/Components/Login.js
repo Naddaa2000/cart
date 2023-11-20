@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { Link, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Spinner from './spinner';
-
+import { useContext } from 'react';
+import cartContext from '../context/cart/cartContext';
 function Login(props) {
+    const a = useContext('../context/cart/cartContext')
     let location = useLocation();
     let history = useNavigate();
     const [loading, setLoading] = useState(false)
@@ -12,7 +14,15 @@ function Login(props) {
         setCredentials({ ...credentials, [e.target.name]: e.target.value })
     }
     const [credentials, setCredentials] = useState({ email: '', password: "" })
+    useEffect(() => {
 
+        props.setProgress(100)
+        if (localStorage.getItem('token')) {
+            props.showAlert('you are already logged in', 'danger')
+            history('/product')
+        }
+
+    }, [])
     const handleClick = async (e) => {
         props.setProgress(50)
 
@@ -32,8 +42,10 @@ function Login(props) {
 
             const json = await response.json();
             // console.log(json);
-            if (json.success) {
+
+            if (json.success && !localStorage.getItem('token')) {
                 // Redirect to homepage
+                console.log(localStorage.getItem('token'));
                 localStorage.setItem('token', json.authtoken);
                 props.showAlert("logged in sucessfully", "success")
                 console.log("logged in successfully");
